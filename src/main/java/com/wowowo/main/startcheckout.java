@@ -19,7 +19,7 @@ public class startcheckout {
 
 	public static void main(String[] args) {
 		// 加载配置文件
-		SingleTest.load();
+		//SingleTest.load();
 		try {
 			// 获取该次提交的对象list
 			List<DiffEntry> list = SingleTest.getLog();

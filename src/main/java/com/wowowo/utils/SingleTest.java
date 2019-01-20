@@ -1,8 +1,11 @@
 package com.wowowo.utils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -15,21 +18,25 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
+import com.wowowo.constant.JGitConstant;
 import com.wowowo.main.startcheckout;
 
 public class SingleTest {
 	/**
 	 * 配置文件信息
 	 * 
-	 * @param url      项目仓库所在url
-	 * @param commitid 这次提交对应的commitid,长id
-	 * @param proPath  导出提交文件的存放位置
+	 * @param url
+	 *            项目仓库所在url
+	 * @param commitid
+	 *            这次提交对应的commitid,长id
+	 * @param proPath
+	 *            导出提交文件的存放位置
 	 */
-	private static String gitRoot;
-	private static String revision;
-	private static String destPath;
-	private static Boolean flag;
-	private static String currentid;
+	private static String gitRoot = JGitConstant.gitRoot;
+	private static String revision = JGitConstant.revision;
+	private static String destPath = JGitConstant.destPath;
+	private static Boolean flag = JGitConstant.flag;
+	private static String currentid = JGitConstant.currentid;
 	private static File file;
 	private static File fileDir;
 	private static Git git;
@@ -53,10 +60,13 @@ public class SingleTest {
 				fileDir = new File(destDir);
 				fileDir.mkdirs();
 				file = new File(destFile);
+				System.out.println(destFile);
 				file.createNewFile();
 				CopyFiles.copy(new File(srcFile), new File(destFile));
-//				System.out.println("要拷贝的源文件地址"+gitRoot + diffEntry.getOldPath());
-//				System.out.println("复制到的目标文件地址"+destPath + diffEntry.getOldPath());
+				// System.out.println("要拷贝的源文件地址"+gitRoot +
+				// diffEntry.getOldPath());
+				// System.out.println("复制到的目标文件地址"+destPath +
+				// diffEntry.getOldPath());
 				System.out.println("**************************************************************************");
 			}
 			// 我又回来啦!,拷贝完毕,回到当前版本
@@ -96,23 +106,36 @@ public class SingleTest {
 	}
 
 	/**
-	 * 用 ClassLoader 读取resource下systemConfig.properties的资源，把对应的参数传给成员属性
+	 * 用 ClassLoader 读取resource下systemConfig.properties的资源，把对应的参数传给成员属性 没用到
 	 */
 	public static void load() {
+
 		Properties properties = new Properties();
-
-		InputStream is = startcheckout.class.getClassLoader().getSystemResourceAsStream("systemConfig.properties");
+		InputStream in = null;
 		try {
-			properties.load(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			in = new BufferedInputStream(
+					startcheckout.class.getClassLoader().getSystemResourceAsStream("systemConfig.properties"));
+			// prop.load(in);//直接这么写，如果properties文件中有汉子，则汉字会乱码。因为未设置编码格式。
+			properties.load(new InputStreamReader(in, "utf-8"));
+			gitRoot = (properties.getProperty("gitRoot"));
+			revision = properties.getProperty("revision");
+			destPath = properties.getProperty("destPath");
+			flag = Boolean.parseBoolean(properties.getProperty("flag"));
+			currentid = properties.getProperty("currentid");
 
-		gitRoot = properties.getProperty("gitRoot");
-		revision = properties.getProperty("revision");
-		destPath = properties.getProperty("destPath");
-		flag = Boolean.parseBoolean(properties.getProperty("flag"));
-		currentid = properties.getProperty("currentid");
+			System.out.println(destPath);
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		}
 
 	}
 }
