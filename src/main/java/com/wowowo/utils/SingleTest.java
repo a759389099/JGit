@@ -35,8 +35,8 @@ public class SingleTest {
 	private static String gitRoot = JGitConstant.gitRoot;
 	private static String revision = JGitConstant.revision;
 	private static String destPath = JGitConstant.destPath;
-	private static Boolean flag = JGitConstant.flag;
-	private static String currentid = JGitConstant.currentid;
+//	private static Boolean flag = JGitConstant.flag;
+//	private static String currentid = JGitConstant.currentid;
 	private static File file;
 	private static File fileDir;
 	private static Git git;
@@ -70,9 +70,9 @@ public class SingleTest {
 				System.out.println("**************************************************************************");
 			}
 			// 我又回来啦!,拷贝完毕,回到当前版本
-			if (flag) {
-				git.checkout().setName(currentid).call();
-			}
+//			if (flag) {
+//				git.checkout().setName(currentid).call();
+//			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,12 +80,12 @@ public class SingleTest {
 	}
 
 	public static List<DiffEntry> getLog() throws Exception {
-		load();
+		//load();
 		git = Git.open(new File(gitRoot));
 		// 我走了,本地版本切换该commitid的版本
-		if (flag) {
+//		if (flag) {
 			git.checkout().setName(revision).call();
-		}
+//		}
 		Repository repository = git.getRepository();
 		ObjectId objId = repository.resolve(revision);
 		Iterable<RevCommit> allCommitsLater = git.log().add(objId).call();
@@ -106,7 +106,8 @@ public class SingleTest {
 	}
 
 	/**
-	 * 用 ClassLoader 读取resource下systemConfig.properties的资源，把对应的参数传给成员属性 没用到
+	 * 没用到
+	 * 用 ClassLoader 读取resource下systemConfig.properties的资源，把对应的参数传给成员属性 
 	 */
 	public static void load() {
 
@@ -120,8 +121,8 @@ public class SingleTest {
 			gitRoot = (properties.getProperty("gitRoot"));
 			revision = properties.getProperty("revision");
 			destPath = properties.getProperty("destPath");
-			flag = Boolean.parseBoolean(properties.getProperty("flag"));
-			currentid = properties.getProperty("currentid");
+//			flag = Boolean.parseBoolean(properties.getProperty("flag"));
+//			currentid = properties.getProperty("currentid");
 
 			System.out.println(destPath);
 
